@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.fhirfactory.pegacorn.deployment.datasets.sourcesystems.fhir;
+package net.fhirfactory.pegacorn.deployment.datasets.systems.fhir;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import net.fhirfactory.pegacorn.petasos.model.topology.NodeElement;
 import org.hl7.fhir.r4.model.*;
@@ -134,7 +135,6 @@ public abstract class SourceSystem {
         systemEndpoint.getIdentifier().add(getIdentifierSystemEndpoint());
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemEndpoint.setPeriod(validPeriod);
         return (systemEndpoint);
     }
@@ -170,7 +170,6 @@ public abstract class SourceSystem {
         // Set the FHIR::Identifier.Period
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemSystemEndpointIDentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
         systemSystemEndpointIDentifier.setAssigner(new Reference("ACT Health - AETHER"));
@@ -189,7 +188,6 @@ public abstract class SourceSystem {
         simpleName.setText(this.getSystemAdministratorContactName());
         Period nameEffectivePeriod = new Period();
         nameEffectivePeriod.setStart(Date.from(Instant.now()));
-        nameEffectivePeriod.setEnd(Date.from(Instant.EPOCH));
         simpleName.setPeriod(nameEffectivePeriod);
         systemSAPractitioner.getName().add(simpleName);
         LOG.debug(".createSystemAdministrator(): Exit, created Practitioner --> {}", systemSAPractitioner);
@@ -227,7 +225,6 @@ public abstract class SourceSystem {
         // Set the FHIR::Identifier.Period
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemSystemAdministrationPractitioner.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
         systemSystemAdministrationPractitioner.setAssigner(new Reference("ACT Health - AETHER"));
@@ -258,7 +255,6 @@ public abstract class SourceSystem {
         // Set the FHIR::Identifier.Period
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemSystemAdministrationPractitionerRole.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
         systemSystemAdministrationPractitionerRole.setAssigner(new Reference("ACT Health - AETHER"));
@@ -297,7 +293,6 @@ public abstract class SourceSystem {
         simpleName.setText(this.getSystemOwnerContactName());
         Period nameEffectivePeriod = new Period();
         nameEffectivePeriod.setStart(Date.from(Instant.now()));
-        nameEffectivePeriod.setEnd(Date.from(Instant.EPOCH));
         simpleName.setPeriod(nameEffectivePeriod);
         systemSOPractitioner.getName().add(simpleName);
         LOG.debug(".createSystemOwner(): Exit, created Practitioner --> {}", systemSOPractitioner);
@@ -325,7 +320,6 @@ public abstract class SourceSystem {
         // Set the FHIR::Identifier.Period
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemOwningPractitionerIdentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
         systemOwningPractitionerIdentifier.setAssigner(new Reference("ACT Health - AETHER"));
@@ -376,7 +370,6 @@ public abstract class SourceSystem {
         // Set the FHIR::Identifier.Period
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemOwningPractitionerIdentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
         systemOwningPractitionerIdentifier.setAssigner(new Reference("ACT Health - AETHER"));
@@ -417,7 +410,6 @@ public abstract class SourceSystem {
         // Set the FHIR::Identifier.Period
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        validPeriod.setEnd(Date.from(Instant.EPOCH));
         systemIdentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
         systemIdentifier.setAssigner(new Reference("ACT Health - AETHER"));
