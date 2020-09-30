@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.fhirfactory.pegacorn.deployment.datasets.systems.fhir;
+package net.fhirfactory.pegacorn.datasets.fhir.r4.internal.systems;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
