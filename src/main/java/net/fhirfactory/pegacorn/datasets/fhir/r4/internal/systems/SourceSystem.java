@@ -30,10 +30,12 @@ import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.endpoint.Endpoint
 import net.fhirfactory.pegacorn.petasos.model.topology.NodeElement;
 import org.hl7.fhir.r4.model.*;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.annotation.PostConstruct;
 
 /**
  *
@@ -79,6 +81,12 @@ public abstract class SourceSystem {
     private EndpointIdentifierBuilder endpointIdentifierBuilder;
 
     public SourceSystem() {
+
+//        this.topologyNode = createTopologyNode();
+    }
+
+    @PostConstruct
+    protected void initialise(){
         this.organizationName = specifyOrganizationName();
         this.systemOwnerContactName = specifySystemOwnerContactName();
         this.systemOwnerContactEmail = sepcifySystemOwnerContactEmail();
@@ -108,8 +116,8 @@ public abstract class SourceSystem {
         this.practitionerRoleSystemOwner = createSystemOwnerPractitionerRole();
         this.organizationSystemOwner = createOrganization();
         this.endpointSystem = createSystemEndpoint();
-//        this.topologyNode = createTopologyNode();
     }
+
 
     abstract protected String specifyOrganizationName();
 
