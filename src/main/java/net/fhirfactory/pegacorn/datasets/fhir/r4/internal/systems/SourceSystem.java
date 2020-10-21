@@ -24,13 +24,16 @@
 package net.fhirfactory.pegacorn.datasets.fhir.r4.internal.systems;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Date;
+
+import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.endpoint.EndpointIdentifierBuilder;
 import net.fhirfactory.pegacorn.petasos.model.topology.NodeElement;
 import org.hl7.fhir.r4.model.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 /**
  *
@@ -71,6 +74,9 @@ public abstract class SourceSystem {
     protected Identifier identifierSystemEndpoint;
     protected Reference systemEndpointReference;
     protected NodeElement topologyNode;
+
+    @Inject
+    private EndpointIdentifierBuilder endpointIdentifierBuilder;
 
     public SourceSystem() {
         this.organizationName = specifyOrganizationName();
@@ -151,30 +157,9 @@ public abstract class SourceSystem {
     
     protected Identifier createSystemEndpointIdentifier() {
         LOG.debug(".createSystemEndpointIdentifier(): Entry");
-        // Create an empty FHIR::Identifier element
-        Identifier systemSystemEndpointIDentifier = new Identifier();
-        // Set the FHIR::Identifier.Use to "SECONDARY" (this id is not their ABN or anything)
-        systemSystemEndpointIDentifier.setUse(Identifier.IdentifierUse.SECONDARY);
-        // Set the FHIR::Identifier.Type to RI (Generalized Resource Identifier)
-        CodeableConcept idType = new CodeableConcept();
-        Coding idTypeCoding = new Coding();
-        idTypeCoding.setCode("RI");
-        idTypeCoding.setSystem("http://terminology.hl7.org/ValueSet/v2-0203");
-        idType.getCoding().add(idTypeCoding);
-        idType.setText("Generalized Resource Identifier");
-        systemSystemEndpointIDentifier.setType(idType);
-        // Set the FHIR::Identifier.System to AETHER (it's our ID we're creating)
-        systemSystemEndpointIDentifier.setSystem("AETHER"); // TODO fix the system identification for Organization Identifiers
-        // Set the FHIR::Identifier.Value to the NodeElementIdentifier (maybe)
-        systemSystemEndpointIDentifier.setValue(this.getSystemEndpointName());
-        // Set the FHIR::Identifier.Period
-        Period validPeriod = new Period();
-        validPeriod.setStart(Date.from(Instant.now()));
-        systemSystemEndpointIDentifier.setPeriod(validPeriod);
-        // Set the FHIR::Identifier.Assigner (to us, for this one)
-        systemSystemEndpointIDentifier.setAssigner(new Reference("ACT Health - AETHER"));
-        LOG.debug(".createSystemEndpointIdentifier(): Exit, created Identifier --> {}", systemSystemEndpointIDentifier);    
-        return(systemSystemEndpointIDentifier);
+        Identifier systemSystemEndpointIdentifier = endpointIdentifierBuilder.constructEndpointIdentifier(this.getSystemEndpointName());
+        LOG.debug(".createSystemEndpointIdentifier(): Exit, created Identifier --> {}", systemSystemEndpointIdentifier);
+        return(systemSystemEndpointIdentifier);
     }
 
     // System Administrator Resource (Practitioner) Set (and Attributes)
@@ -218,8 +203,8 @@ public abstract class SourceSystem {
         orgType.getCoding().add(orgTypeCoding);
         orgType.setText("Generalized Resource Identifier");
         systemSystemAdministrationPractitioner.setType(orgType);
-        // Set the FHIR::Identifier.System to AETHER (it's our ID we're creating)
-        systemSystemAdministrationPractitioner.setSystem("AETHER"); // TODO fix the system identification for Organization Identifiers
+        // Set the FHIR::Identifier.System to FHIRFactory (it's our ID we're creating)
+        systemSystemAdministrationPractitioner.setSystem("FHIRFactory"); // TODO fix the system identification for Organization Identifiers
         // Set the FHIR::Identifier.Value to the NodeElementIdentifier for the TechnologyOne System
         systemSystemAdministrationPractitioner.setValue(this.getSystemAdministratorContactName());
         // Set the FHIR::Identifier.Period
@@ -227,7 +212,7 @@ public abstract class SourceSystem {
         validPeriod.setStart(Date.from(Instant.now()));
         systemSystemAdministrationPractitioner.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
-        systemSystemAdministrationPractitioner.setAssigner(new Reference("ACT Health - AETHER"));
+        systemSystemAdministrationPractitioner.setAssigner(new Reference("Organization/FHIRFactory"));
         LOG.debug(".createSystemAdministratorIdentifier(): Exit, created Identifier --> {}", systemSystemAdministrationPractitioner);
         return(systemSystemAdministrationPractitioner);
     }
@@ -248,8 +233,8 @@ public abstract class SourceSystem {
         orgType.getCoding().add(orgTypeCoding);
         orgType.setText("Generalized Resource Identifier");
         systemSystemAdministrationPractitionerRole.setType(orgType);
-        // Set the FHIR::Identifier.System to AETHER (it's our ID we're creating)
-        systemSystemAdministrationPractitionerRole.setSystem("AETHER"); // TODO fix the system identification for Organization Identifiers
+        // Set the FHIR::Identifier.System to FHIRFactory (it's our ID we're creating)
+        systemSystemAdministrationPractitionerRole.setSystem("FHIRFactory"); // TODO fix the system identification for Organization Identifiers
         // Set the FHIR::Identifier.Value to the NodeElementIdentifier for the TechnologyOne System
         systemSystemAdministrationPractitionerRole.setValue(this.getOrganizationName() + ": System Administrator Role");
         // Set the FHIR::Identifier.Period
@@ -257,7 +242,7 @@ public abstract class SourceSystem {
         validPeriod.setStart(Date.from(Instant.now()));
         systemSystemAdministrationPractitionerRole.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
-        systemSystemAdministrationPractitionerRole.setAssigner(new Reference("ACT Health - AETHER"));
+        systemSystemAdministrationPractitionerRole.setAssigner(new Reference("Organization/FHIRFactory"));
         LOG.debug(".createSystemAdministratorPractitionerRoleIdentifier(): Exit, created Identifier --> {}", systemSystemAdministrationPractitionerRole);
         return(systemSystemAdministrationPractitionerRole);
     }
@@ -313,8 +298,8 @@ public abstract class SourceSystem {
         orgType.getCoding().add(orgTypeCoding);
         orgType.setText("Generalized Resource Identifier");
         systemOwningPractitionerIdentifier.setType(orgType);
-        // Set the FHIR::Identifier.System to AETHER (it's our ID we're creating)
-        systemOwningPractitionerIdentifier.setSystem("AETHER"); // TODO fix the system identification for Organization Identifiers
+        // Set the FHIR::Identifier.System to FHIRFactory (it's our ID we're creating)
+        systemOwningPractitionerIdentifier.setSystem("FHIRFactory"); // TODO fix the system identification for Organization Identifiers
         // Set the FHIR::Identifier.Value to the NodeElementIdentifier for the TechnologyOne System
         systemOwningPractitionerIdentifier.setValue(this.getSystemOwnerContactName());
         // Set the FHIR::Identifier.Period
@@ -322,7 +307,7 @@ public abstract class SourceSystem {
         validPeriod.setStart(Date.from(Instant.now()));
         systemOwningPractitionerIdentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
-        systemOwningPractitionerIdentifier.setAssigner(new Reference("ACT Health - AETHER"));
+        systemOwningPractitionerIdentifier.setAssigner(new Reference("Organization/FHIRFactory"));
         LOG.debug(".createSystemOwnerIdentifier(): Exit, created Identifier --> {}", systemOwningPractitionerIdentifier);
         return(systemOwningPractitionerIdentifier);
     }
@@ -363,8 +348,8 @@ public abstract class SourceSystem {
         orgType.getCoding().add(orgTypeCoding);
         orgType.setText("Generalized Resource Identifier");
         systemOwningPractitionerIdentifier.setType(orgType);
-        // Set the FHIR::Identifier.System to AETHER (it's our ID we're creating)
-        systemOwningPractitionerIdentifier.setSystem("AETHER"); // TODO fix the system identification for Organization Identifiers
+        // Set the FHIR::Identifier.System to FHIRFactory (it's our ID we're creating)
+        systemOwningPractitionerIdentifier.setSystem("FHIRFactory"); // TODO fix the system identification for Organization Identifiers
         // Set the FHIR::Identifier.Value to the NodeElementIdentifier for the TechnologyOne System
         systemOwningPractitionerIdentifier.setValue(this.getOrganizationName() + ": System Owner Role");
         // Set the FHIR::Identifier.Period
@@ -372,7 +357,7 @@ public abstract class SourceSystem {
         validPeriod.setStart(Date.from(Instant.now()));
         systemOwningPractitionerIdentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
-        systemOwningPractitionerIdentifier.setAssigner(new Reference("ACT Health - AETHER"));
+        systemOwningPractitionerIdentifier.setAssigner(new Reference("Organization/FHIRFactory"));
         LOG.debug(".createSystemOwnerIdentifier(): Exit, created Identifier --> {}", systemOwningPractitionerIdentifier);
         return(systemOwningPractitionerIdentifier);
     }
@@ -403,8 +388,8 @@ public abstract class SourceSystem {
         orgType.getCoding().add(orgTypeCoding);
         orgType.setText("Organization Identifier");
         systemIdentifier.setType(orgType);
-        // Set the FHIR::Identifier.System to AETHER (it's our ID we're creating)
-        systemIdentifier.setSystem("AETHER"); // TODO fix the system identification for Organization Identifiers
+        // Set the FHIR::Identifier.System to FHIRFactory (it's our ID we're creating)
+        systemIdentifier.setSystem("FHIRFactory"); // TODO fix the system identification for Organization Identifiers
         // Set the FHIR::Identifier.Value to the NodeElementIdentifier for the TechnologyOne System
         systemIdentifier.setValue(this.getOrganizationName());
         // Set the FHIR::Identifier.Period
@@ -412,7 +397,7 @@ public abstract class SourceSystem {
         validPeriod.setStart(Date.from(Instant.now()));
         systemIdentifier.setPeriod(validPeriod);
         // Set the FHIR::Identifier.Assigner (to us, for this one)
-        systemIdentifier.setAssigner(new Reference("ACT Health - AETHER"));
+        systemIdentifier.setAssigner(new Reference("Organization/FHIRFactory"));
         LOG.debug("createOrganizationIdentifier(): Exit, created Identifier --> {}", systemIdentifier);
         return (systemIdentifier);
     }
