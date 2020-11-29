@@ -19,13 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.organization;
+package net.fhirfactory.pegacorn.datasets.fhir.r4.common;
 
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.endpoint.EndpointIdentifierBuilder;
+import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeEnum;
 import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeSystemFactory;
 import net.fhirfactory.pegacorn.datasets.fhir.r4.internal.systems.DeploymentInstanceDetailInterface;
 import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Period;
 import org.slf4j.Logger;
@@ -37,32 +36,28 @@ import java.time.Instant;
 import java.util.Date;
 
 @ApplicationScoped
-public class OrganizationIdentifierBuilder {
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointIdentifierBuilder.class);
+public class SourceOfTruthRIDIdentifierBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(SourceOfTruthRIDIdentifierBuilder.class);
+
     @Inject
     private PegacornIdentifierCodeSystemFactory pegacornIdentifierCodeSystemFactory;
 
     @Inject
     private DeploymentInstanceDetailInterface deploymentInstanceDetailInterface;
 
-    public Identifier constructOrganizationIdentifier(String identifierValue){
-        LOG.debug(".constructOrganizationIdentifier(): Entry");
-        Identifier systemSystemEndpointIDentifier = new Identifier();
-        systemSystemEndpointIDentifier.setUse(Identifier.IdentifierUse.SECONDARY);
-        CodeableConcept idType = new CodeableConcept();
-        Coding idTypeCoding = new Coding();
-        idTypeCoding.setCode("XX");
-        idTypeCoding.setSystem("http://terminology.hl7.org/ValueSet/v2-0203");
-        idType.getCoding().add(idTypeCoding);
-        idType.setText("Organization");
-        systemSystemEndpointIDentifier.setType(idType);
-        systemSystemEndpointIDentifier.setSystem(deploymentInstanceDetailInterface.getDeploymentInstanceSystemEndpointSystem());
-        systemSystemEndpointIDentifier.setValue(identifierValue);
+    public Identifier constructRIDIdentifier(String identifierSystem, String identifierValue){
+        LOG.debug(".constructRIDIdentifier(): Entry");
+        Identifier ridIdentifier = new Identifier();
+        ridIdentifier.setUse(Identifier.IdentifierUse.SECONDARY);
+        CodeableConcept idType = pegacornIdentifierCodeSystemFactory.buildIdentifierType(PegacornIdentifierCodeEnum.IDENTIFIER_CODE_SOURCE_OF_TRUTH_RECORD_ID);
+        ridIdentifier.setType(idType);
+        ridIdentifier.setSystem(identifierSystem);
+        ridIdentifier.setValue(identifierValue);
         Period validPeriod = new Period();
         validPeriod.setStart(Date.from(Instant.now()));
-        systemSystemEndpointIDentifier.setPeriod(validPeriod);
-        systemSystemEndpointIDentifier.setAssigner(deploymentInstanceDetailInterface.getDeploymentInstanceSystemOwnerOrganization());
-        LOG.debug(".constructOrganizationIdentifier(): Exit, created Identifier --> {}", systemSystemEndpointIDentifier);
-        return systemSystemEndpointIDentifier;
+        ridIdentifier.setPeriod(validPeriod);
+        ridIdentifier.setAssigner(deploymentInstanceDetailInterface.getDeploymentInstanceOrganization());
+        LOG.debug(".constructRIDIdentifier(): Exit, created Identifier --> {}", ridIdentifier);
+        return ridIdentifier;
     }
 }
