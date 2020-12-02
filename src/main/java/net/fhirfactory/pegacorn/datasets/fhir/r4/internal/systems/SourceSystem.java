@@ -27,6 +27,9 @@ import java.time.Instant;
 import java.util.Date;
 
 import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.endpoint.EndpointIdentifierBuilder;
+import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeEnum;
+import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeSystemFactory;
+import net.fhirfactory.pegacorn.deployment.properties.SystemWideProperties;
 import net.fhirfactory.pegacorn.petasos.model.topology.NodeElement;
 import org.hl7.fhir.r4.model.*;
 
@@ -78,25 +81,25 @@ public abstract class SourceSystem {
     protected NodeElement topologyNode;
 
     @Inject
-    private EndpointIdentifierBuilder endpointIdentifierBuilder;
+    private PegacornIdentifierCodeSystemFactory pegacornIdentifierCodeSystemFactory;
+
+    @Inject
+    private SystemWideProperties systemWideProperties;
 
     public SourceSystem() {
-
-//        this.topologyNode = createTopologyNode();
-    }
-
-    @PostConstruct
-    protected void initialise(){
-        this.organizationName = specifyOrganizationName();
         this.systemOwnerContactName = specifySystemOwnerContactName();
         this.systemOwnerContactEmail = sepcifySystemOwnerContactEmail();
         this.systemOwnerContactPhone = specifySystemOwnerContactPhone();
         this.systemAdministratorContactName = specifySystemAdministratorContactName();
         this.systemAdministratorContactEmail = specifySystemAdministratorContactEmail();
         this.systemAdministratorContactPhone = specifySystemAdministratorContactPhone();
+    }
+
+    @PostConstruct
+    public void initialise(){
+        this.organizationName = specifyOrganizationName();
         this.systemEndpointName = specifyEndpointName();
         this.systemReference = createSystemReference();
-
         this.identifierOrganization = createOrganizationIdentifier();
         this.identifierSystemOwnerPractitioner = createSystemOwnerPractitionerIdentifier();
         this.identifierSystemOwnerPractitionerRole = createSystemOwnerPractitionerRoleIdentifier();
@@ -165,9 +168,36 @@ public abstract class SourceSystem {
     
     protected Identifier createSystemEndpointIdentifier() {
         LOG.debug(".createSystemEndpointIdentifier(): Entry");
-        Identifier systemSystemEndpointIdentifier = endpointIdentifierBuilder.constructEndpointIdentifier(this.getSystemEndpointName());
+        Identifier systemSystemEndpointIdentifier = new Identifier();
+        systemSystemEndpointIdentifier.setUse(Identifier.IdentifierUse.SECONDARY);
+        CodeableConcept idType = pegacornIdentifierCodeSystemFactory.buildIdentifierType(PegacornIdentifierCodeEnum.IDENTIFIER_CODE_FHIR_ENDPOINT_SYSTEM);
+        systemSystemEndpointIdentifier.setType(idType);
+        systemSystemEndpointIdentifier.setSystem(getSystemReference());
+        systemSystemEndpointIdentifier.setValue(specifyEndpointName());
+        Period validPeriod = new Period();
+        validPeriod.setStart(Date.from(Instant.now()));
+        systemSystemEndpointIdentifier.setPeriod(validPeriod);
+        systemSystemEndpointIdentifier.setAssigner(buildDefaultEndpointReference());
         LOG.debug(".createSystemEndpointIdentifier(): Exit, created Identifier --> {}", systemSystemEndpointIdentifier);
         return(systemSystemEndpointIdentifier);
+    }
+
+    private Reference buildDefaultEndpointReference(){
+        Identifier systemSystemEndpointIdentifier = new Identifier();
+        systemSystemEndpointIdentifier.setUse(Identifier.IdentifierUse.SECONDARY);
+        CodeableConcept idType = pegacornIdentifierCodeSystemFactory.buildIdentifierType(PegacornIdentifierCodeEnum.IDENTIFIER_CODE_FHIR_ENDPOINT_SYSTEM);
+        systemSystemEndpointIdentifier.setType(idType);
+        systemSystemEndpointIdentifier.setSystem(getSystemReference());
+        systemSystemEndpointIdentifier.setValue(systemWideProperties.getSystemDeploymentID());
+        Period validPeriod = new Period();
+        validPeriod.setStart(Date.from(Instant.now()));
+        systemSystemEndpointIdentifier.setPeriod(validPeriod);
+        systemSystemEndpointIdentifier.setAssigner(getReferenceOrganization());
+        Reference systemEndpointReference = new Reference();
+        systemEndpointReference.setIdentifier(systemSystemEndpointIdentifier);
+        systemEndpointReference.setType("Endpoint");
+        systemEndpointReference.setDisplay(systemWideProperties.getSystemDeploymentID());
+        return(systemEndpointReference);
     }
 
     // System Administrator Resource (Practitioner) Set (and Attributes)
