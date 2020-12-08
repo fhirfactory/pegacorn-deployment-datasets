@@ -28,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -36,6 +38,10 @@ public class BundleContentHelper {
     private static final Logger LOG = LoggerFactory.getLogger(BundleContentHelper.class);
 
     public Resource extractFirstRepOfType(Bundle bundle, ResourceType resourceType){
+        return(extractFirstRepOfType(bundle, resourceType.toString()));
+    }
+
+    public Resource extractFirstRepOfType(Bundle bundle, String resourceType){
         LOG.debug(".extractFirstRepOfType(): Entry, bundle --> {}, resourceType --> {}", bundle, resourceType);
         if(bundle == null || resourceType == null){
             LOG.debug(".extractFirstRepOfType(): Exit, Ether the bundle or the resourceType are null!");
@@ -47,7 +53,7 @@ public class BundleContentHelper {
         }
         for(Bundle.BundleEntryComponent currentEntry: bundle.getEntry()){
             Resource currentResource = currentEntry.getResource();
-            if(currentResource.getResourceType().equals(resourceType)){
+            if(currentResource.getResourceType().toString().contentEquals(resourceType)){
                 LOG.debug(".extractFirstRepOfType(): Exit, Found the \"First\" entry, returning it!");
                 return(currentResource);
             }
@@ -76,5 +82,22 @@ public class BundleContentHelper {
         }
         LOG.debug(".extractAllResourcesOfType(): Exit, returning resourceList, number of entries --> {}", resourceList.size());
         return(resourceList);
+    }
+
+    public Bundle buildEmptySearchBundle(){
+        return(new Bundle());
+    }
+
+    public Bundle buildSearchResponseBundle(Resource resource){
+        Bundle.BundleEntrySearchComponent bundleEntrySearchComponent = new Bundle.BundleEntrySearchComponent();
+        bundleEntrySearchComponent.setScore(1);
+        bundleEntrySearchComponent.setMode(Bundle.SearchEntryMode.MATCH);
+        Bundle.BundleEntryComponent bundleEntryComponent = new Bundle.BundleEntryComponent();
+        bundleEntryComponent.setResource(resource);
+        bundleEntryComponent.setSearch(bundleEntrySearchComponent);
+        Bundle bundle = new Bundle();
+        bundle.setTimestamp(Date.from(Instant.now()));
+        bundle.addEntry(bundleEntryComponent);
+        return(bundle);
     }
 }
