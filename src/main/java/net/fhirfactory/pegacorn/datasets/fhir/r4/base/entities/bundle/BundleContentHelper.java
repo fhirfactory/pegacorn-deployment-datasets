@@ -21,17 +21,18 @@
  */
 package net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.enterprise.context.ApplicationScoped;
+
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @ApplicationScoped
 public class BundleContentHelper {
@@ -42,23 +43,23 @@ public class BundleContentHelper {
     }
 
     public Resource extractFirstRepOfType(Bundle bundle, String resourceType){
-        LOG.debug(".extractFirstRepOfType(): Entry, bundle --> {}, resourceType --> {}", bundle, resourceType);
+        LOG.info(".extractFirstRepOfType(): Entry, bundle --> {}, resourceType --> {}", bundle, resourceType);
         if(bundle == null || resourceType == null){
-            LOG.debug(".extractFirstRepOfType(): Exit, Ether the bundle or the resourceType are null!");
+            LOG.info(".extractFirstRepOfType(): Exit, Ether the bundle or the resourceType are null!");
             return(null);
         }
-        if(bundle.getTotal() <=0 ){
-            LOG.debug(".extractFirstRepOfType(): Exit, Bundle is empty, returning null");
-            return(null);
-        }
+//        if(bundle.getTotal() <=0 ){
+//            LOG.info(".extractFirstRepOfType(): Exit, Bundle is empty, returning null");
+//            return(null);
+//        }
         for(Bundle.BundleEntryComponent currentEntry: bundle.getEntry()){
             Resource currentResource = currentEntry.getResource();
             if(currentResource.getResourceType().toString().contentEquals(resourceType)){
-                LOG.debug(".extractFirstRepOfType(): Exit, Found the \"First\" entry, returning it!");
+                LOG.info(".extractFirstRepOfType(): Exit, Found the \"First\" entry, returning it!");
                 return(currentResource);
             }
         }
-        LOG.debug(".extractFirstRepOfType(): Exit, no Resource found of type specified, returning null");
+        LOG.info(".extractFirstRepOfType(): Exit, no Resource found of type specified, returning null");
         return(null);
     }
 

@@ -21,15 +21,16 @@
  */
 package net.fhirfactory.pegacorn.datasets.fhir.r4.common;
 
-import ca.uhn.fhir.rest.param.TokenParam;
-import ca.uhn.fhir.rest.param.TokenParamModifier;
+import javax.enterprise.context.ApplicationScoped;
+
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
+import ca.uhn.fhir.rest.param.TokenParam;
+import ca.uhn.fhir.rest.param.TokenParamModifier;
 
 @ApplicationScoped
 public class HAPIRestfulAPI2FHIRHelpers {
@@ -57,7 +58,7 @@ public class HAPIRestfulAPI2FHIRHelpers {
         String identifierValue = null;
         boolean hasAppropriateModifier = false;
         if(identifierParam.getModifier() == null) {
-            LOG.error(".tokenParam2Identifier(): There is no modifier present");
+            LOG.trace(".tokenParam2Identifier(): There is no modifier present");
             hasAppropriateModifier = false;
         } else {
             if(identifierParam.getModifier().getValue().equals(TokenParamModifier.OF_TYPE.getValue())){
